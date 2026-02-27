@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* include utility classes in streamdown */
+@source "../node_modules/streamdown/dist/index.js";
+
+@plugin "@tailwindcss/typography";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #f4f4f5;
+  --muted-foreground: #a1a1aa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #09090b;
+    --foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #71717a;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
