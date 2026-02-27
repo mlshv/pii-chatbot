@@ -166,7 +166,10 @@ export async function POST(request: Request) {
       },
     });
 
-    return createUIMessageStreamResponse({ stream });
+    return createUIMessageStreamResponse({
+      stream,
+      headers: { "Content-Type": "text/event-stream; charset=utf-8" },
+    });
   } catch (error) {
     console.error("[chat/route] POST error:", error);
     return Response.json({ error: String(error) }, { status: 500 });
