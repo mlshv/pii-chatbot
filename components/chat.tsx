@@ -81,6 +81,14 @@ export function Chat({
             {messages.map((message) => (
               <Message key={message.id} message={message} />
             ))}
+            {isLoading && (
+              <div className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-500">
+                <span className="inline-block size-2 animate-pulse rounded-full bg-zinc-500" />
+                <span>
+                  {status === "submitted" ? "Thinking..." : "Generating..."}
+                </span>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         )}
