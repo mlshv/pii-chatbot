@@ -1,5 +1,19 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 
-const sql = neon(process.env.DATABASE_URL!);
-export const db = drizzle(sql);
+let _db: ReturnType<typeof drizzle> | null = null;
+
+export function getDb() {
+  if (!_db) {
+    const sql = neon(process.env.DATABASE_URL!);
+    _db = drizzle(sql);
+  }
+  return _db;
+}
+
+// Convenience alias
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_, prop) {
+    return (getDb() as Record<string | symbol, unknown>)[prop];
+  },
+});
