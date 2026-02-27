@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/cerebras": "^2.0.34",
+    "@ai-sdk/openai": "^3.0.36",
     "@ai-sdk/react": "^3.0.105",
     "@neondatabase/serverless": "^1.0.2",
     "@phosphor-icons/react": "^2.1.10",

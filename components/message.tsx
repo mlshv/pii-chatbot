@@ -1,11 +1,34 @@
 "use client";
 
-import type { UIMessage } from "ai";
 import { Response } from "@/components/response";
 import { cn } from "@/lib/utils";
+import { applyRedactions, type ChatMessage } from "@/lib/pii";
 
-export function Message({ message }: { message: UIMessage }) {
+export function Message({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
+
+  // Collect PII items from data-redaction parts (only present during streaming)
+  const piiItems: string[] = [];
+  const partTypes = message.parts.map((p) => p.type);
+  console.log("[Message] id=%s role=%s parts=%s", message.id, message.role, JSON.stringify(partTypes));
+
+  for (const part of message.parts) {
+    if (part.type === "data-redaction") {
+      console.log("[Message] found data-redaction part:", part.data);
+      piiItems.push(...part.data.items);
+    }
+  }
+
+  if (piiItems.length > 0) {
+    console.log("[Message] piiItems:", piiItems);
+  }
+
+  function getDisplayText(originalText: string): string {
+    if (piiItems.length === 0) return originalText;
+    const redacted = applyRedactions(originalText, piiItems);
+    console.log("[Message] redacted text:", redacted);
+    return redacted;
+  }
 
   return (
     <div
@@ -24,14 +47,17 @@ export function Message({ message }: { message: UIMessage }) {
       >
         {message.parts.map((part, i) => {
           if (part.type === "text") {
+            const displayText = getDisplayText(part.text);
+            // Change key when redactions arrive to force Streamdown re-mount
+            const key = piiItems.length > 0 ? `${i}-redacted` : i;
             if (isUser) {
               return (
-                <p key={i} className="whitespace-pre-wrap text-sm">
-                  {part.text}
+                <p key={key} className="whitespace-pre-wrap text-sm">
+                  {displayText}
                 </p>
               );
             }
-            return <Response key={i}>{part.text}</Response>;
+            return <Response key={key}>{displayText}</Response>;
           }
           return null;
         })}

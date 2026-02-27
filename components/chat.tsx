@@ -4,16 +4,16 @@ import { useChat } from "@ai-sdk/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpIcon, StopIcon } from "@phosphor-icons/react";
-import type { UIMessage } from "ai";
 import { Message } from "@/components/message";
 import { generateUUID } from "@/lib/utils";
+import type { ChatMessage } from "@/lib/pii";
 
 export function Chat({
   id,
   initialMessages,
 }: {
   id: string;
-  initialMessages: UIMessage[];
+  initialMessages: ChatMessage[];
 }) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -21,9 +21,9 @@ export function Chat({
 
   const hasRedirected = useRef(false);
 
-  const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop } = useChat<ChatMessage>({
     id,
-    messages: initialMessages,
+    messages: initialMessages as ChatMessage[],
     generateId: generateUUID,
     onFinish: () => {
       // Push URL on first message for new chats (created from /)
@@ -95,13 +95,13 @@ export function Chat({
       </div>
 
       {/* Input */}
-      <div className="pb-6">
+      <div className="pb-6 px-2">
         <form
           onSubmit={handleSubmit}
-          className="relative mx-auto max-w-3xl rounded-2xl border border-zinc-700 bg-zinc-900"
+          className="relative mx-auto max-w-3xl rounded-2xl border border-zinc-200 bg-white focus-within:border-zinc-900"
         >
           <textarea
-            className="min-h-[100px] w-full resize-none bg-transparent px-4 pt-3 pb-14 text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+            className="min-h-[100px] w-full resize-none bg-transparent px-4 pt-3 pb-14 text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
             placeholder="Type a message..."
             rows={3}
             value={input}
@@ -119,7 +119,7 @@ export function Chat({
               <button
                 type="button"
                 onClick={stop}
-                className="flex size-8 items-center justify-center rounded-full bg-zinc-100 text-zinc-900"
+                className="flex size-8 items-center justify-center rounded-full bg-zinc-900 text-white"
               >
                 <StopIcon size={16} weight="bold" />
               </button>
@@ -127,7 +127,7 @@ export function Chat({
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="flex size-8 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 transition-opacity disabled:opacity-30"
+                className="flex size-8 items-center justify-center rounded-full bg-zinc-900 text-white transition-opacity disabled:opacity-30"
               >
                 <ArrowUpIcon size={16} weight="bold" />
               </button>

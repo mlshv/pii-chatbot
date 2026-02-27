@@ -1,7 +1,8 @@
-import type { UIMessage, UIMessagePart } from "ai";
+import type { UIMessage } from "ai";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { DBMessage } from "./db/schema";
+import type { ChatMessage } from "./pii";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,11 +16,14 @@ export function generateUUID(): string {
   });
 }
 
-export function convertToUIMessages(messages: DBMessage[]): UIMessage[] {
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const isValidUUID = (s: string) => UUID_RE.test(s);
+
+export function convertToUIMessages(messages: DBMessage[]): ChatMessage[] {
   return messages.map((message) => ({
     id: message.id,
     role: message.role as "user" | "assistant" | "system",
-    parts: message.parts as UIMessagePart<Record<string, never>, Record<string, never>>[],
+    parts: message.parts as ChatMessage["parts"],
   }));
 }
 
