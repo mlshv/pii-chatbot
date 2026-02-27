@@ -11,9 +11,10 @@ export function getDb() {
   return _db;
 }
 
-// Convenience alias
+// Lazy proxy so module-level imports don't crash at build time
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const db = new Proxy({} as ReturnType<typeof drizzle>, {
   get(_, prop) {
-    return (getDb() as Record<string | symbol, unknown>)[prop];
+    return (getDb() as any)[prop];
   },
 });
