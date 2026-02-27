@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       const result = streamText({
         model: cerebras("zai-glm-4.7"),
         system:
-          "You are a helpful assistant. You can use spoiler syntax ||like this|| to hide text that the user needs to click to reveal.",
+          "You are a helpful assistant.",
         messages: modelMessages,
       });
 
